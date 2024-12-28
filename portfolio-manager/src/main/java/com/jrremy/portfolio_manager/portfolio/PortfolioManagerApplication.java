@@ -1,4 +1,4 @@
-package com.jrremy.portfolio_manager;
+package com.jrremy.portfolio_manager.portfolio;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
