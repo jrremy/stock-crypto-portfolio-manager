@@ -1,16 +1,19 @@
 from fastapi import FastAPI, Depends, HTTPException
 from pydantic import BaseModel
-from typing import List, Annotated
+from typing import List, Literal, Annotated
+from sqlalchemy.orm import Session
 
-from server.models import Transaction
+from database import engine, SessionLocal
+import models
 
 app = FastAPI()
+models.Base.metadata.create_all(bind=engine)
 
 class Transaction(BaseModel):
     id: int
-    asset_type: str
+    asset_type: Literal['stock', 'crypto']
     ticker: str
-    transaction_type: str
+    transaction_type: Literal['buy', 'sell', 'swap']
     quantity: int
     price: float
 
@@ -18,11 +21,18 @@ class Portfolio(BaseModel):
     id: int
     transactions: List[Transaction]
 
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+        
+db_dependency = Annotated[Session, Depends(get_db)]
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
-
-transactions = []
 
 @app.get("/transactions", response_model=list[Transaction])
 async def get_transactions():
