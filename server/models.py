@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from database import Base
 
 class Portfolio(Base):
-    __tablename__ = "transactions"
+    __tablename__ = "portfolios"
     
     id = Column(Integer, primary_key=True, index=True)
     stock_assets = Column(JSON)

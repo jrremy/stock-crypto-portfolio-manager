@@ -4,24 +4,13 @@ from typing import List, Literal, Annotated
 from sqlalchemy.orm import Session
 from datetime import datetime
 
+import crud.portfolio
+import crud.transaction
 from database import engine, SessionLocal
-import models
+import models, crud, schemas
 
 app = FastAPI()
 models.Base.metadata.create_all(bind=engine)
-
-class TransactionBase(BaseModel):
-    id: int
-    asset_type: Literal['stock', 'crypto']
-    ticker: str
-    transaction_type: Literal['buy', 'sell', 'swap']
-    quantity: int
-    timestamp: datetime | None = None
-    price: float
-
-class PortfolioBase(BaseModel):
-    id: int
-    transactions: List[TransactionBase]
 
 def get_db():
     db = SessionLocal()
@@ -36,51 +25,50 @@ db_dependency = Annotated[Session, Depends(get_db)]
 async def root():
     return {"message": "Hello World"}
 
+# Portfolio endpoints
+
+@app.post("/portfolios", response_model=schemas.PortfolioBase)
+async def create_portfolio(portfolio: schemas.PortfolioCreate, db: Session = Depends(get_db)):
+    return crud.portfolio.create_portfolio(db, portfolio)
+
 @app.get("/portfolios/{portfolio_id}")
-async def read_portfolio(portfolio_id: int, db: db_dependency):
-    result = db.query(models.Portfolio).filter(models.Portfolio.id == portfolio_id).first()
-    if not result:
+async def read_portfolio(portfolio_id: int, db: Session = Depends(get_db)):
+    return crud.portfolio.get_portfolio(db, portfolio_id)
+
+@app.put("/portfolios/{portfolio_id}", response_model=schemas.PortfolioBase)
+async def update_portfolio(portfolio_id: int, portfolio: schemas.PortfolioUpdate, db: Session = Depends(get_db)):
+    updated_portfolio = crud.portfolio.update_portfolio(db, portfolio_id, portfolio)
+    if not updated_portfolio:
         raise HTTPException(status_code=404, detail="Portfolio not found")
-    return result
+    return updated_portfolio
+
+@app.delete("/portfolios/{portfolio_id}")
+async def delete_portfolio(portfolio_id: int, db: Session = Depends(get_db)):
+    deleted_portfolio = crud.portfolio.delete_portfolio(db, portfolio_id)
+    if not deleted_portfolio:
+        raise HTTPException(status_code=404, detail="Portfolio not found")
+    return {"detail": "Portfolio deleted successfully"}
+
+# Transaction endpoints
+
+@app.post("/transactions", response_model=schemas.TransactionBase)
+async def create_transaction(transaction: schemas.TransactionCreate, db: Session = Depends(get_db)):
+    return crud.transaction.create_transaction(db, transaction)
 
 @app.get("/transactions/{portfolio_id}")
-async def read_transactions(portfolio_id: int, db: db_dependency):
-    result = db.query(models.Transaction).filter(models.Transaction.id == portfolio_id).all()
-    if not result:
-        raise HTTPException(status_code=404, detail="Transactions not found")
-    return result
+async def read_transactions(portfolio_id: int, db: Session = Depends(get_db)):
+    return crud.transaction.get_transactions_by_portfolio(db, portfolio_id)
 
-@app.post("/transactions")
-async def create_transaction(transaction: TransactionBase, db: db_dependency):
-    db_transaction = models.Transaction(
-        asset_type=transaction.asset_type,
-        ticker=transaction.ticker,
-        transaction_type=transaction.transaction_type,
-        quantity=transaction.quantity,
-        price=transaction.price
-    )
-    db.add(db_transaction)
-    db.commit()
-    db.refresh(db_transaction)
-    return db_transaction
+@app.put("/transactions/{transaction_id}", response_model=schemas.TransactionBase)
+async def update_transaction(transaction_id: int, transaction: schemas.TransactionUpdate, db: Session = Depends(get_db)):
+    updated_transaction = crud.transaction.update_transaction(db, transaction_id, transaction)
+    if not updated_transaction:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+    return updated_transaction
 
-@app.post("/portfolios")
-async def create_portfolio(portfolio: PortfolioBase, db: db_dependency):
-    db_portfolio = models.Portfolio()
-    db.add(db_portfolio)
-    db.commit()
-    db.refresh(db_portfolio)
-    
-    for txn in portfolio.transactions:
-        db_transaction = models.Transaction(
-            asset_type=txn.asset_type,
-            ticker=txn.ticker,
-            transaction_type=txn.transaction_type,
-            quantity=txn.quantity,
-            price=txn.price,
-            portfolio_id=db_portfolio.id  # Link transaction to the portfolio
-        )
-        db.add(db_transaction)
-
-    db.commit()
-    return db_portfolio
+@app.delete("/transactions/{transaction_id}")
+async def delete_transaction(transaction_id: int, db: Session = Depends(get_db)):
+    deleted_transaction = crud.transaction.delete_transaction(db, transaction_id)
+    if not deleted_transaction:
+        raise HTTPException(status_code=404, detail="Transaction not found")
+    return {"detail": "Transaction deleted successfully"}
