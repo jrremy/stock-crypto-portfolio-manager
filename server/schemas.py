@@ -10,6 +10,7 @@ class TransactionBase(BaseModel):
     quantity: int
     price: float
     timestamp: Optional[datetime] = None
+    portfolio_id: int
 
 class TransactionCreate(TransactionBase):
     pass
@@ -21,19 +22,20 @@ class TransactionUpdate(BaseModel):
     quantity: Optional[int] = None
     price: Optional[float] = None
     timestamp: Optional[datetime] = None
+    portfolio_id: Optional[int] = None
 
 class TransactionDelete(BaseModel):
     id: int
 
 # Portfolio Schemas
 class PortfolioBase(BaseModel):
-    transactions: List[TransactionCreate]
+    pass
 
 class PortfolioCreate(PortfolioBase):
     pass
 
 class PortfolioUpdate(BaseModel):
-    transactions: Optional[List[TransactionUpdate]] = None  # Allow updating transactions optionally
+    pass
 
 class PortfolioDelete(BaseModel):
     id: int

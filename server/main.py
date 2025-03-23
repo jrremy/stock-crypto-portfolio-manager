@@ -32,7 +32,7 @@ async def create_portfolio(portfolio: schemas.PortfolioCreate, db: Session = Dep
     return crud.portfolio.create_portfolio(db, portfolio)
 
 @app.get("/portfolios/{portfolio_id}")
-async def read_portfolio(portfolio_id: int, db: Session = Depends(get_db)):
+async def get_portfolio(portfolio_id: int, db: Session = Depends(get_db)):
     return crud.portfolio.get_portfolio(db, portfolio_id)
 
 @app.put("/portfolios/{portfolio_id}", response_model=schemas.PortfolioBase)
@@ -56,7 +56,7 @@ async def create_transaction(transaction: schemas.TransactionCreate, db: Session
     return crud.transaction.create_transaction(db, transaction)
 
 @app.get("/transactions/{portfolio_id}")
-async def read_transactions(portfolio_id: int, db: Session = Depends(get_db)):
+async def get_transactions(portfolio_id: int, db: Session = Depends(get_db)):
     return crud.transaction.get_transactions_by_portfolio(db, portfolio_id)
 
 @app.put("/transactions/{transaction_id}", response_model=schemas.TransactionBase)

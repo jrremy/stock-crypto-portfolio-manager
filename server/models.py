@@ -8,7 +8,6 @@ class Portfolio(Base):
     id = Column(Integer, primary_key=True, index=True)
     stock_assets = Column(JSON)
     crypto_assets = Column(JSON)
-    transactions = relationship("Transaction", back_populates="portfolio")  # Relationship
     
 class Transaction(Base):
     __tablename__ = "transactions"
