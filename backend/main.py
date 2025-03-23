@@ -1,8 +1,6 @@
 from fastapi import FastAPI, Depends, HTTPException
-from pydantic import BaseModel
-from typing import List, Literal, Annotated
+from typing import Annotated
 from sqlalchemy.orm import Session
-from datetime import datetime
 
 import crud.portfolio
 import crud.transaction
