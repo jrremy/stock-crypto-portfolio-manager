@@ -35,6 +35,10 @@ async def create_portfolio(portfolio: schemas.PortfolioCreate, db: Session = Dep
 async def get_portfolio(portfolio_id: int, db: Session = Depends(get_db)):
     return crud.portfolio.get_portfolio(db, portfolio_id)
 
+@app.get("/portfolios/")
+async def get_portfolios(db: Session = Depends(get_db)):
+    return crud.portfolio.get_portfolios(db)
+
 @app.delete("/portfolios/{portfolio_id}")
 async def delete_portfolio(portfolio_id: int, db: Session = Depends(get_db)):
     deleted_portfolio = crud.portfolio.delete_portfolio(db, portfolio_id)
