@@ -16,15 +16,6 @@ def get_portfolio(db: Session, portfolio_id: int):
         raise HTTPException(status_code=404, detail="Portfolio not found")
     return portfolio
 
-def update_portfolio(db: Session, portfolio_id: int, portfolio: PortfolioCreate):
-    db_portfolio = db.query(Portfolio).filter(Portfolio.id == portfolio_id).first()
-    if not db_portfolio:
-        raise HTTPException(status_code=404, detail="Portfolio not found")
-
-    db.commit()
-    db.refresh(db_portfolio)
-    return db_portfolio
-
 def delete_portfolio(db: Session, portfolio_id: int):
     db_portfolio = db.query(Portfolio).filter(Portfolio.id == portfolio_id).first()
     if not db_portfolio:

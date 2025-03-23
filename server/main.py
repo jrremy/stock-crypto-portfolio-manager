@@ -35,13 +35,6 @@ async def create_portfolio(portfolio: schemas.PortfolioCreate, db: Session = Dep
 async def get_portfolio(portfolio_id: int, db: Session = Depends(get_db)):
     return crud.portfolio.get_portfolio(db, portfolio_id)
 
-@app.put("/portfolios/{portfolio_id}", response_model=schemas.PortfolioBase)
-async def update_portfolio(portfolio_id: int, portfolio: schemas.PortfolioUpdate, db: Session = Depends(get_db)):
-    updated_portfolio = crud.portfolio.update_portfolio(db, portfolio_id, portfolio)
-    if not updated_portfolio:
-        raise HTTPException(status_code=404, detail="Portfolio not found")
-    return updated_portfolio
-
 @app.delete("/portfolios/{portfolio_id}")
 async def delete_portfolio(portfolio_id: int, db: Session = Depends(get_db)):
     deleted_portfolio = crud.portfolio.delete_portfolio(db, portfolio_id)

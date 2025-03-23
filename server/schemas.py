@@ -34,8 +34,5 @@ class PortfolioBase(BaseModel):
 class PortfolioCreate(PortfolioBase):
     pass
 
-class PortfolioUpdate(BaseModel):
-    pass
-
 class PortfolioDelete(BaseModel):
     id: int
