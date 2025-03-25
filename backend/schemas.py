@@ -29,10 +29,13 @@ class TransactionDelete(BaseModel):
 
 # Portfolio Schemas
 class PortfolioBase(BaseModel):
-    pass
+    name: str
 
 class PortfolioCreate(PortfolioBase):
     pass
+
+class PortfolioUpdate(BaseModel):
+    name: Optional[str] = None
 
 class PortfolioDelete(BaseModel):
     id: int
