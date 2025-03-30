@@ -32,7 +32,7 @@ This project is a unified portfolio management tool that enables users to track 
 
 ## Development Status
 
-This project is actively in development—my hands are still dirty. Here's what I'm currently working on:
+This project is in development - my hands are still dirty. Here's what I'm currently working on:
 
 - **Finishing up** the business logic of the backend  
 - **Polishing** the frontend UI/UX  
