@@ -6,8 +6,10 @@ class Portfolio(Base):
     __tablename__ = "portfolios"
     
     id = Column(Integer, primary_key=True, index=True)
-    stock_assets = Column(JSON)
-    crypto_assets = Column(JSON)
+    name = Column(String)
+    stock_assets = Column(JSON, default={})
+    crypto_assets = Column(JSON, default={})
+    transactions = relationship("Transaction", back_populates="portfolio")
     
 class Transaction(Base):
     __tablename__ = "transactions"

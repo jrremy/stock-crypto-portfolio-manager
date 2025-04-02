@@ -29,10 +29,17 @@ class TransactionDelete(BaseModel):
 
 # Portfolio Schemas
 class PortfolioBase(BaseModel):
-    pass
+    name: str
+    stock_assets: dict[str, int] = {}  # ticker -> quantity mapping for stocks
+    crypto_assets: dict[str, int] = {}  # ticker -> quantity mapping for crypto
 
 class PortfolioCreate(PortfolioBase):
     pass
+
+class PortfolioUpdate(BaseModel):
+    name: Optional[str] = None
+    stock_assets: Optional[dict[str, int]] = None
+    crypto_assets: Optional[dict[str, int]] = None
 
 class PortfolioDelete(BaseModel):
     id: int
