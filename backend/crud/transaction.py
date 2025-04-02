@@ -1,6 +1,6 @@
 from sqlalchemy.orm import Session
-from ..schemas import *
-from ..models import *
+from schemas import *
+from models import *
 from fastapi import HTTPException
 
 def create_transaction(db: Session, transaction: TransactionCreate):
