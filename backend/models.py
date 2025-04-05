@@ -1,4 +1,5 @@
 from sqlalchemy import Column, ForeignKey, Integer, String, Float, JSON, DateTime, func
+from sqlalchemy.ext.mutable import MutableDict
 from sqlalchemy.orm import relationship
 from database import Base
 
@@ -7,8 +8,8 @@ class Portfolio(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String)
-    stock_assets = Column(JSON, default={})
-    crypto_assets = Column(JSON, default={})
+    stock_assets = Column(MutableDict.as_mutable(JSON), default=dict)
+    crypto_assets = Column(MutableDict.as_mutable(JSON), default=dict)
     transactions = relationship("Transaction", back_populates="portfolio")
     
 class Transaction(Base):
