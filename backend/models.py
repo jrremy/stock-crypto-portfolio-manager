@@ -18,7 +18,7 @@ class Transaction(Base):
     asset_type = Column(String, nullable=False)
     ticker = Column(String, nullable=False)
     transaction_type = Column(String, nullable=False)
-    quantity = Column(Integer, nullable=False)
+    quantity = Column(Float, nullable=False)
     timestamp = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     price = Column(Float, nullable=False)
     portfolio_id = Column(Integer, ForeignKey("portfolios.id"), nullable=False)
