@@ -18,28 +18,29 @@ This project is a unified portfolio management tool that enables users to track 
 
 ### Portfolio Endpoints
 
-- **`POST /portfolios`** – Create a new portfolio.  
-- **`GET /portfolios/{portfolio_id}`** – Retrieve a specific portfolio by its ID.  
-- **`GET /portfolios/`** – Retrieve all portfolios.  
-- **`DELETE /portfolios/{portfolio_id}`** – Delete a portfolio by its ID.  
+- **`POST /portfolios`** – Create a new portfolio.
+- **`GET /portfolios/{portfolio_id}`** – Retrieve a specific portfolio by its ID.
+- **`GET /portfolios/`** – Retrieve all portfolios.
+- **`DELETE /portfolios/{portfolio_id}`** – Delete a portfolio by its ID.
 
 ### Transaction Endpoints
 
-- **`POST /transactions`** – Create a new transaction.  
-- **`GET /transactions/{portfolio_id}`** – Retrieve all transactions associated with a portfolio.  
-- **`PUT /transactions/{transaction_id}`** – Update a specific transaction by its ID.  
-- **`DELETE /transactions/{transaction_id}`** – Delete a transaction by its ID.  
+- **`POST /transactions`** – Create a new transaction.
+- **`GET /transactions/{portfolio_id}`** – Retrieve all transactions associated with a portfolio.
+- **`PUT /transactions/{transaction_id}`** – Update a specific transaction by its ID.
+- **`DELETE /transactions/{transaction_id}`** – Delete a transaction by its ID.
 
 ## Development Status
 
 This project is in development - my hands are still dirty. Here's what I'm currently working on:
 
-- **Finishing up** the business logic of the backend  
-- **Polishing** the frontend UI/UX  
-- **Setting up** the Scrapy news scraper  
-- **Deciding** between Chart.js and Recharts for data visualization  
+- **Finishing up** the business logic of the backend
+- **Polishing** the frontend UI/UX
+- **Setting up** the Scrapy news scraper
+- **Deciding** between Chart.js and Recharts for data visualization
 
-Still need to start:  
+Still need to start:
+
 - **Implementing** Pandas-based performance analytics
 - **Implementing** asset data fetching and ticker search results with Alpaca and CoinGecko APIs
 
