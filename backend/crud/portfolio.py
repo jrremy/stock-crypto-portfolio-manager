@@ -31,6 +31,7 @@ def update_portfolio(db: Session, portfolio_id: int, portfolio: PortfolioUpdate)
     if not db_portfolio:
         raise HTTPException(status_code=404, detail="Portfolio not found")
     
+    # Only update the fields that are provided in the request body
     if portfolio.name is not None:
         db_portfolio.name = portfolio.name
     if portfolio.stock_assets is not None:

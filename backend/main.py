@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException
 from typing import Annotated
 from sqlalchemy.orm import Session
+from fastapi.middleware.cors import CORSMiddleware
 
 import crud.portfolio
 import crud.transaction
@@ -8,6 +9,16 @@ from database import engine, SessionLocal
 import models, crud, schemas
 
 app = FastAPI()
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Your Next.js frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 models.Base.metadata.create_all(bind=engine)
 
 def get_db():
