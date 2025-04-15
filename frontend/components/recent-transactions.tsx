@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import { Badge } from "@/components/ui/badge"
-import { ArrowUpRight, ArrowDownRight, RefreshCw } from "lucide-react"
+import { Badge } from "@/components/ui/badge";
+import { ArrowUpRight, ArrowDownRight, RefreshCw } from "lucide-react";
 
 export function RecentTransactions() {
   // Mock data - would come from API in real app
@@ -51,7 +51,7 @@ export function RecentTransactions() {
       price: 420.78,
       timestamp: "2023-06-11T11:05:00Z",
     },
-  ]
+  ];
 
   return (
     <div className="space-y-4">
@@ -63,8 +63,8 @@ export function RecentTransactions() {
                 transaction.transactionType === "buy"
                   ? "bg-green-100 text-green-600"
                   : transaction.transactionType === "sell"
-                    ? "bg-red-100 text-red-600"
-                    : "bg-blue-100 text-blue-600"
+                  ? "bg-red-100 text-red-600"
+                  : "bg-blue-100 text-blue-600"
               }`}
             >
               {transaction.transactionType === "buy" ? (
@@ -89,14 +89,19 @@ export function RecentTransactions() {
           </div>
           <div className="text-right">
             <p className="font-medium">
-              {transaction.transactionType === "buy" ? "+" : transaction.transactionType === "sell" ? "-" : ""}
+              {transaction.transactionType === "buy"
+                ? "+"
+                : transaction.transactionType === "sell"
+                ? "-"
+                : ""}
               {transaction.quantity} {transaction.ticker}
             </p>
-            <p className="text-sm text-muted-foreground">${transaction.price.toLocaleString()}</p>
+            <p className="text-sm text-muted-foreground">
+              ${transaction.price.toLocaleString()}
+            </p>
           </div>
         </div>
       ))}
     </div>
-  )
+  );
 }
-
