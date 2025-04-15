@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends, HTTPException
+from fastapi import FastAPI, Depends, Query
 from typing import Annotated
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
@@ -63,8 +63,13 @@ async def create_transaction(transaction: schemas.TransactionCreate, db: Session
     return crud.transaction.create_transaction(db, transaction)
 
 @app.get("/transactions/{portfolio_id}")
-async def get_transactions(portfolio_id: int, db: Session = Depends(get_db)):
-    return crud.transaction.get_transactions_by_portfolio(db, portfolio_id)
+async def get_transactions(
+    portfolio_id: int,
+    limit: int = Query(default=10, gt=0),
+    sort: str = Query(default="desc", pattern="^(asc|desc)$"),
+    db: Session = Depends(get_db)
+):
+    return crud.transaction.get_transactions_by_portfolio(db, portfolio_id, limit, sort)
 
 @app.put("/transactions/{transaction_id}", response_model=schemas.TransactionBase)
 async def update_transaction(transaction_id: int, transaction: schemas.TransactionUpdate, db: Session = Depends(get_db)):

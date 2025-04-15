@@ -1,57 +1,37 @@
 "use client";
 
+import { usePortfolio } from "@/hooks/use-portfolio";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpRight, ArrowDownRight, RefreshCw } from "lucide-react";
+import { getTransactions } from "@/lib/api";
+import { Transaction } from "@/types";
 
 export function RecentTransactions() {
-  // Mock data - would come from API in real app
-  const transactions = [
-    {
-      id: "1",
-      assetType: "stock",
-      ticker: "AAPL",
-      transactionType: "buy",
-      quantity: 10,
-      price: 175.23,
-      timestamp: "2023-06-15T10:30:00Z",
+  const { currentPortfolio } = usePortfolio();
+
+  const portfolioId = currentPortfolio?.id;
+
+  const { data: transactions = [], isLoading } = useQuery({
+    queryKey: ["transactions", portfolioId],
+    queryFn: () => {
+      if (!portfolioId) throw new Error("No portfolio ID");
+      return getTransactions(portfolioId, 5);
     },
-    {
-      id: "2",
-      assetType: "crypto",
-      ticker: "BTC",
-      transactionType: "sell",
-      quantity: 0.5,
-      price: 30245.67,
-      timestamp: "2023-06-14T14:45:00Z",
-    },
-    {
-      id: "3",
-      assetType: "stock",
-      ticker: "MSFT",
-      transactionType: "buy",
-      quantity: 5,
-      price: 325.12,
-      timestamp: "2023-06-13T09:15:00Z",
-    },
-    {
-      id: "4",
-      assetType: "crypto",
-      ticker: "ETH",
-      transactionType: "swap",
-      quantity: 2,
-      price: 1845.34,
-      timestamp: "2023-06-12T16:20:00Z",
-    },
-    {
-      id: "5",
-      assetType: "stock",
-      ticker: "NVDA",
-      transactionType: "buy",
-      quantity: 3,
-      price: 420.78,
-      timestamp: "2023-06-11T11:05:00Z",
-    },
-  ];
+    enabled: !!portfolioId, // only fetch if we have an ID
+  });
+
+  if (!portfolioId) {
+    return (
+      <p className="text-sm text-muted-foreground">
+        Select a portfolio to view transactions
+      </p>
+    );
+  }
+
+  if (isLoading) {
+    return <p className="text-sm">Loading transactions...</p>;
+  }
 
   return (
     <div className="space-y-4">
@@ -60,16 +40,16 @@ export function RecentTransactions() {
           <div className="flex items-center gap-3">
             <div
               className={`flex h-9 w-9 items-center justify-center rounded-full ${
-                transaction.transactionType === "buy"
+                transaction.transaction_type === "buy"
                   ? "bg-green-100 text-green-600"
-                  : transaction.transactionType === "sell"
+                  : transaction.transaction_type === "sell"
                   ? "bg-red-100 text-red-600"
                   : "bg-blue-100 text-blue-600"
               }`}
             >
-              {transaction.transactionType === "buy" ? (
+              {transaction.transaction_type === "buy" ? (
                 <ArrowUpRight className="h-5 w-5" />
-              ) : transaction.transactionType === "sell" ? (
+              ) : transaction.transaction_type === "sell" ? (
                 <ArrowDownRight className="h-5 w-5" />
               ) : (
                 <RefreshCw className="h-5 w-5" />
@@ -79,7 +59,7 @@ export function RecentTransactions() {
               <p className="font-medium">{transaction.ticker}</p>
               <div className="flex items-center gap-1">
                 <Badge variant="outline" className="text-xs capitalize">
-                  {transaction.assetType}
+                  {transaction.asset_type}
                 </Badge>
                 <span className="text-xs text-muted-foreground">
                   {new Date(transaction.timestamp).toLocaleDateString()}
@@ -89,9 +69,9 @@ export function RecentTransactions() {
           </div>
           <div className="text-right">
             <p className="font-medium">
-              {transaction.transactionType === "buy"
+              {transaction.transaction_type === "buy"
                 ? "+"
-                : transaction.transactionType === "sell"
+                : transaction.transaction_type === "sell"
                 ? "-"
                 : ""}
               {transaction.quantity} {transaction.ticker}

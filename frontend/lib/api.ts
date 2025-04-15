@@ -80,14 +80,24 @@ export const deletePortfolio = async (id: number): Promise<void> => {
   }
 };
 
-// Transaction API calls
 export const getTransactions = async (
-  portfolioId: number
+  portfolioId: number,
+  limit: number = 10,
+  sort: "asc" | "desc" = "desc"
 ): Promise<Transaction[]> => {
-  const response = await fetch(`${API_BASE_URL}/transactions/${portfolioId}`);
+  const params = new URLSearchParams({
+    limit: limit.toString(),
+    sort,
+  });
+
+  const response = await fetch(
+    `${API_BASE_URL}/transactions/${portfolioId}?${params.toString()}`
+  );
+
   if (!response.ok) {
     throw new Error("Failed to fetch transactions");
   }
+
   return response.json();
 };
 

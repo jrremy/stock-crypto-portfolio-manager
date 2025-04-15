@@ -1,4 +1,6 @@
+from fastapi import HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import desc, asc
 from schemas import *
 from models import *
 from fastapi import HTTPException
@@ -65,10 +67,27 @@ def create_transaction(db: Session, transaction: TransactionCreate):
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Failed to create transaction: {str(e)}")
 
-def get_transactions_by_portfolio(db: Session, portfolio_id: int):
-    transactions = db.query(Transaction).filter(Transaction.portfolio_id == portfolio_id).all()
+def get_transactions_by_portfolio(
+    db: Session,
+    portfolio_id: int,
+    limit: Optional[int] = None,
+    sort: str = "desc"
+):
+    query = db.query(Transaction).filter(Transaction.portfolio_id == portfolio_id)
+
+    if sort == "asc":
+        query = query.order_by(asc(Transaction.timestamp))
+    else:
+        query = query.order_by(desc(Transaction.timestamp))
+
+    if limit:
+        query = query.limit(limit)
+
+    transactions = query.all()
+
     if not transactions:
         raise HTTPException(status_code=404, detail="Transactions not found")
+    
     return transactions
 
 def update_transaction(db: Session, transaction_id: int, transaction: TransactionUpdate):
