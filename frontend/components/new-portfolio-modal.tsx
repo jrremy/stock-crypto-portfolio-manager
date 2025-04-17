@@ -1,43 +1,62 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { createPortfolio } from "@/lib/api";
 
 interface NewPortfolioModalProps {
-  isOpen: boolean
-  onClose: () => void
-  onPortfolioCreate: (name: string) => void
+  isOpen: boolean;
+  onClose: () => void;
+  onPortfolioCreate: () => void;
 }
 
-export function NewPortfolioModal({ isOpen, onClose, onPortfolioCreate }: NewPortfolioModalProps) {
-  const [portfolioName, setPortfolioName] = useState("")
-  const [error, setError] = useState("")
+export function NewPortfolioModal({
+  isOpen,
+  onClose,
+  onPortfolioCreate,
+}: NewPortfolioModalProps) {
+  const [portfolioName, setPortfolioName] = useState("");
+  const [error, setError] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
 
     if (!portfolioName.trim()) {
-      setError("Portfolio name is required")
-      return
+      setError("Portfolio name is required");
+      return;
     }
 
     // Here you would check if the portfolio name already exists
     // For now, we'll just simulate it with a mock check
-    const existingPortfolios = ["Main Portfolio", "Crypto Only", "Long-term Investments"]
+    const existingPortfolios = [
+      "Main Portfolio",
+      "Crypto Only",
+      "Long-term Investments",
+    ];
     if (existingPortfolios.includes(portfolioName)) {
-      setError("A portfolio with this name already exists")
-      return
+      setError("A portfolio with this name already exists");
+      return;
     }
 
-    onPortfolioCreate(portfolioName)
-    setPortfolioName("")
-    setError("")
-  }
+    createPortfolio({
+      name: portfolioName,
+      stock_assets: {},
+      crypto_assets: {},
+    });
+    onPortfolioCreate();
+    setPortfolioName("");
+    setError("");
+  };
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
@@ -52,8 +71,8 @@ export function NewPortfolioModal({ isOpen, onClose, onPortfolioCreate }: NewPor
               id="portfolio-name"
               value={portfolioName}
               onChange={(e) => {
-                setPortfolioName(e.target.value)
-                setError("")
+                setPortfolioName(e.target.value);
+                setError("");
               }}
               placeholder="My Portfolio"
             />
@@ -68,6 +87,5 @@ export function NewPortfolioModal({ isOpen, onClose, onPortfolioCreate }: NewPor
         </form>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
-
