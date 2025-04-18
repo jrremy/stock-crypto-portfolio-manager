@@ -142,3 +142,18 @@ export const deleteTransaction = async (id: number): Promise<void> => {
     throw new Error("Failed to delete transaction");
   }
 };
+
+export const getPortfolioValue = async (
+  portfolioId: number
+): Promise<{ total_value: number }> => {
+  const response = await fetch(
+    `${API_BASE_URL}/portfolios/${portfolioId}/value`
+  );
+  console.log("response fetched");
+  if (!response.ok) {
+    console.log("response not ok");
+    throw new Error("Failed to fetch portfolio value");
+  }
+  console.log("portfolio value fetched:", response.json());
+  return response.json();
+};

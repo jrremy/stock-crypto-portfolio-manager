@@ -1,7 +1,7 @@
 "use client";
 
 import { usePortfolio } from "@/hooks/use-portfolio";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { Badge } from "@/components/ui/badge";
 import { ArrowUpRight, ArrowDownRight, RefreshCw } from "lucide-react";
 import { getTransactions } from "@/lib/api";
@@ -9,13 +9,12 @@ import { Transaction } from "@/types";
 
 export function RecentTransactions() {
   const { currentPortfolio } = usePortfolio();
-
   const portfolioId = currentPortfolio?.id;
 
   const { data: transactions = [], isLoading } = useQuery({
     queryKey: ["transactions", portfolioId],
     queryFn: () => {
-      if (!portfolioId) throw new Error("No portfolio ID");
+      if (!portfolioId) throw new Error("No portfolio selected");
       return getTransactions(portfolioId, 5);
     },
     enabled: !!portfolioId, // only fetch if we have an ID

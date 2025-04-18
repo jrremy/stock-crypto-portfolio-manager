@@ -3,7 +3,7 @@ from typing import Annotated, Dict, List
 from sqlalchemy.orm import Session
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from services.price_service import PriceService
+from services.price.price_service import PriceService
 
 import crud.portfolio
 import crud.transaction
@@ -21,7 +21,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize price service
 price_service = PriceService()
 
 models.Base.metadata.create_all(bind=engine)
@@ -61,6 +60,14 @@ async def delete_portfolio(portfolio_id: int, db: Session = Depends(get_db)):
 async def update_portfolio(portfolio_id: int, portfolio: schemas.PortfolioUpdate, db: Session = Depends(get_db)):
     return crud.portfolio.update_portfolio(db, portfolio_id, portfolio)
 
+@app.get("/portfolios/{portfolio_id}/value")
+async def get_portfolio_value(portfolio_id: int, db: Session = Depends(get_db)):
+    try:
+        total_value = await crud.portfolio.calculate_portfolio_value(db, portfolio_id, price_service)
+        return {"total_value": total_value}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Transaction endpoints
 
 @app.post("/transactions", response_model=schemas.TransactionBase)
@@ -84,16 +91,13 @@ async def update_transaction(transaction_id: int, transaction: schemas.Transacti
 async def delete_transaction(transaction_id: int, db: Session = Depends(get_db)):
     return crud.transaction.delete_transaction(db, transaction_id)
 
-class PortfolioValueRequest(BaseModel):
-    stock_assets: Dict[str, float]
-    crypto_assets: Dict[str, float]
-
-@app.post("/api/portfolio/value")
-async def calculate_portfolio_value(request: PortfolioValueRequest):
+@app.get("/portfolios/{portfolio_id}/value")
+async def calculate_portfolio_value(portfolio_id: int, db: Session = Depends(get_db)):
     try:
-        total_value = await price_service.calculate_portfolio_value(
-            request.stock_assets,
-            request.crypto_assets
+        total_value = await crud.portfolio.get_portfolio_value(
+            db,
+            portfolio_id,
+            price_service
         )
         return {"total_value": total_value}
     except HTTPException as e:
